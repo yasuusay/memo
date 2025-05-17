@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>麻雀牌覚える君</title>
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP" rel="stylesheet" />
+  <!-- <link rel="stylesheet" href="css/style.css"> --> 
+
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    .tile-container {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin-top: 20px;
+    }
+    .tile {
+      cursor: pointer;
+      width: 100px;
+      height: 140px;
+      object-fit: contain;
+      display: none; /* 最初は非表示 */
+    }
+    .buttons {
+      margin-top: 20px;
+    }
+    .result {
+      font-size: 24px;
+      margin: 15px 0;
+    }
+    .score {
+      margin-top: 10px;
+    }
+
+    .container { 
+      background: url(./img/back.jpg) ;
+      width:100%;
+      height:800px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="container_game">
+    <h1>麻雀牌覚える君</h1>
+    <p>大きい方を選べ！</p>
+    <div class="buttons">
+      <button id="startButton">スタート</button>
+      <button id="resetButton">リセット</button>
+    </div>
+
+    <div class="tile-container">
+      <img id="leftTile" class="tile" src="" alt="左の牌" />
+      <img id="rightTile" class="tile" src="" alt="右の牌" />
+    </div>
+
+    <div class="result" id="resultText"></div>
+
+    <div class="score">
+      正解数: <span id="correctCount">0</span> /
+      不正解数: <span id="wrongCount">0</span>
+    </div>
+  </div>
+</div> 
+ </body> 
+
+  <script>
+    const startButton = document.getElementById("startButton");
+    const resetButton = document.getElementById("resetButton");
+    const leftTile = document.getElementById("leftTile");
+    const rightTile = document.getElementById("rightTile");
+    const resultText = document.getElementById("resultText");
+    const correctCountSpan = document.getElementById("correctCount");
+    const wrongCountSpan = document.getElementById("wrongCount");
+
+    const suits = ["man", "pin", "sou"];
+    let correctCount = 0;
+    let wrongCount = 0;
+    let leftValue = 0;
+    let rightValue = 0;
+    let clickable = false;
+
+    function getRandomTile() {
+      const number = Math.floor(Math.random() * 9) + 1;
+      const suit = suits[Math.floor(Math.random() * suits.length)];
+      return { number, suit };
+    }
+
+    function getImagePath(tile) {
+      switch (tile.suit) {
+        case "man":
+          return `./img/tile_${tile.number}.png`;
+        case "pin":
+          return `./img/pinzu_tile_${tile.number}.png`;
+        case "sou":
+          return `./img/souzu_tile_${tile.number}.png`;
+        default:
+          return "";
+      }
+    }
+
+    function setTiles() {
+      let left, right;
+
+      // 同じ数字を避ける
+      do {
+        left = getRandomTile();
+        right = getRandomTile();
+      } while (left.number === right.number);
+
+      leftValue = left.number;
+      rightValue = right.number;
+
+      leftTile.src = getImagePath(left);
+      rightTile.src = getImagePath(right);
+
+      leftTile.style.display = "block";
+      rightTile.style.display = "block";
+
+      resultText.textContent = "";
+      clickable = true;
+    }
+
+    
+      //牌の画像をクリックしたときに正解か不正解かを判定して、結果を表示・カウントする
+    function handleClick(isLeft) {
+      if (!clickable) return;
+      clickable = false;
+
+      const selected = isLeft ? leftValue : rightValue;
+      const other = isLeft ? rightValue : leftValue;
+
+      if (selected > other) {
+        resultText.textContent = "正解！";
+        correctCount++;
+      } else {
+        resultText.textContent = "不正解…";
+        wrongCount++;
+      }
+
+      correctCountSpan.textContent = correctCount;
+      wrongCountSpan.textContent = wrongCount;
+    }
+
+    startButton.addEventListener("click", setTiles);
+
+    leftTile.addEventListener("click", () => handleClick(true));
+    rightTile.addEventListener("click", () => handleClick(false));
+
+    resetButton.addEventListener("click", () => {
+      correctCount = 0;
+      wrongCount = 0;
+      correctCountSpan.textContent = "0";
+      wrongCountSpan.textContent = "0";
+      resultText.textContent = "";
+      leftTile.src = "";
+      rightTile.src = "";
+      leftTile.style.display = "none";
+      rightTile.style.display = "none";
+    });
+  </script>
+</body>
+
+</html>
