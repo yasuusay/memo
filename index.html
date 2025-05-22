@@ -4,16 +4,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>麻雀牌覚える君</title>
+  <title>ポンっと覚える！麻雀入門</title>
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP" rel="stylesheet" />
   <!-- <link rel="stylesheet" href="css/style.css"> --> 
 
   <style>
     body {
-      font-family: sans-serif;
+      font-family: "Hannotate SC";
       text-align: center;
       padding: 20px;
+
     }
+
+    .screen {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hidden {
+      display: none;
+    }
+
     .tile-container {
       display: flex;
       justify-content: center;
@@ -39,30 +52,145 @@
     }
 
     .container { 
-      background: url(./img/back.jpg) ;
-      width:100%;
+      background-repeat: no-repeat;
+      max-width:1200px;
       height:800px;
       display: flex;
       justify-content: center;
       align-items: center;
+      margin: 0 auto;
     }
+
+    .tile-container-empty {
+      height: 100px;
+    }
+
+    #empty{
+      height: 140px;
+      display: block;
+    }
+
+    #screenCommon {
+      width: 600px;
+      height:800px;
+      margin: 0 auto;
+      background-color: #F9ECDB;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      border:solid #333 2px;
+      border-radius: 3em .5em 2em .5em/.4em 2em .5em 3em;
+      background: url(./img/back.jpg);
+      
+    }
+
+    .girly_btn_6 {
+    background: none;
+    border: none;
+    font-family: "Hannotate SC";
+    font-size: 2rem;
+}
+
+#text-box {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    margin: 10px;
+    padding: 8px 25px 8px 25px;
+    background: none;
+    text-transform: uppercase;
+    font-size: 140%;
+    font-weight: bold;
+    color:#333;/*ボタン文字色*/
+    border: 2px solid #333;
+    border-radius: 3em .5em 2em .5em/.4em 2em .5em 3em;
+    background: #ffffffcc;
+    top: -100px;
+}
+
+.button{
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    margin: 10px;
+    padding: 8px 25px 8px 25px;
+    background: none;
+    text-transform: uppercase;
+    font-size: 140%;
+    font-weight: bold;
+    color:#333;/*ボタン文字色*/
+    border: 2px solid #333;
+    background: #ffffffcc;
+}
+
+.choice button{
+     position: relative;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    margin: 10px;
+    padding: 8px 25px 8px 25px;
+    background: none;
+    text-transform: uppercase;
+    font-size: 140%;
+    font-weight: bold;
+    color:#333;/*ボタン文字色*/
+    border: 2px solid #333;
+    background: #ffffffcc;
+    top: -80px;
+}
+
+#storyScreen::before{
+  content: url(./img/character.png);
+  display: block;
+}
 
   </style>
 </head>
 <body>
 
+
+
+<div id="screenCommon">
+
+
+ <!-- スタート画面 -->
+
+ <div id="start_container">
+  <div id="startScreen" class="screen">
+    <h1>ポンっと覚える！麻雀入門</h1>
+    <button id="gameStartButton" class="girly_btn_6">ゲームスタート！</button>
+  </div>
+ </div> 
+
+<!-- ストーリー画面 -->
+
+
+<div id="storyScreen" class="screen hidden">
+   <div id="text-box"></div>
+  <div class="choice" id="choices"></div>
+</div>
+
+
+<!-- ゲーム画面 -->
+
+<div id="gameScreen" class="screen hidden">
 <div class="container">
   <div class="container_game">
-    <h1>麻雀牌覚える君</h1>
-    <p>大きい方を選べ！</p>
+    <p>大きい方を選べ！<br>10問正解で合格！</p>
     <div class="buttons">
-      <button id="startButton">スタート</button>
-      <button id="resetButton">リセット</button>
+      <button id="startButton" class="button">スタート</button>
+      <button id="resetButton" class="button">リセット</button>
     </div>
 
     <div class="tile-container">
+      <span id="empty"></span>
       <img id="leftTile" class="tile" src="" alt="左の牌" />
       <img id="rightTile" class="tile" src="" alt="右の牌" />
+
     </div>
 
     <div class="result" id="resultText"></div>
@@ -73,9 +201,126 @@
     </div>
   </div>
 </div> 
+</div>
+</div>
  </body> 
 
+
+
+
   <script>
+
+
+    //スタート画面
+    const gameStartButton = document.getElementById("gameStartButton");
+    const startScreen = document.getElementById("startScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const storyScreen = document.getElementById("storyScreen")
+    const screenCommon = document.getElementById("screenCommon")
+
+    gameStartButton.addEventListener("click", () => {
+    startScreen.classList.add("hidden");
+    storyScreen.classList.remove("hidden");
+    
+    });
+
+
+    //ストーリーシーン定義
+   const scenes = [
+  {
+    text: "こんにちは！私は麻雀案内人のマージャン子だよ！",
+    choices: [{ label: "よろしく！", next: 1 }]
+  },
+  {
+    text: "麻雀は4人で行うゲーム。まずは牌（はい）を14枚配られるよ。",
+    choices: [{ label: "へえ〜", next: 2 }]
+  },
+  {
+    text: "自分の番がきたら、牌を1枚引いて、いらない牌を1枚捨てるんだ。",
+    choices: []
+  },
+  {
+    text: "こうして手牌を入れ替えていって、特定の形を目指すよ。",
+    choices: []
+  },
+  {
+    text: "目指すのは『4つのメンツ』と『1つの雀頭（じゃんとう）』という形！",
+    choices: []
+  },
+  {
+    text: "メンツっていうのは『3枚1組』のことで、『順子（しゅんつ）』や『刻子（こーつ）』があるよ。",
+    choices: []
+  },
+  {
+    text: "雀頭は同じ牌を2枚揃えたペアのことだよ！",
+    choices: []
+  },
+  {
+    text: "使う牌は『数牌（すうはい）』と『字牌（じはい）』の2種類があるよ。",
+    choices: []
+  },
+  {
+    text: "数牌は3種類に分かれていて、『萬子（まんず）』『筒子（ぴんず）』『索子（そうず）』っていうんだ！",
+    choices: []
+  },
+  {
+    text: "字牌は東南西北や白發中などがあるけど、今回は数牌を中心に覚えていこう！",
+    choices: []
+  },
+  {
+    text: "じゃあ、さっそく練習問題にチャレンジしてみよう！",
+    choices: []
+  }
+];
+
+    let currentScene = 0;
+
+    function renderScene() {
+  const scene = scenes[currentScene];
+  document.getElementById('text-box').textContent = scene.text;
+
+  const choices = document.getElementById('choices');
+  choices.innerHTML = '';
+
+  // 選択肢がある場合：ボタン表示
+  if (scene.choices && scene.choices.length > 0) {
+    storyScreen.onclick = null; // クリックイベント無効化
+    scene.choices.forEach(choice => {
+      const btn = document.createElement('button');
+      btn.textContent = choice.label;
+      btn.onclick = (e) => {
+        e.stopPropagation(); // 親のクリックイベントを防ぐ
+        currentScene = choice.next;
+        if (currentScene === 5) {
+          storyScreen.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+        } else {
+          renderScene();
+        }
+      };
+      choices.appendChild(btn);
+    });
+  } else {
+    // 選択肢がない場合：画面クリックで次へ進む
+    storyScreen.onclick = () => {
+      currentScene++;
+      if (currentScene >= scenes.length || currentScene === 11) {
+        storyScreen.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+      } else {
+        renderScene();
+      }
+    };
+  }
+}
+
+    //ストーリースタート
+    renderScene();
+
+
+
+
+
     const startButton = document.getElementById("startButton");
     const resetButton = document.getElementById("resetButton");
     const leftTile = document.getElementById("leftTile");
@@ -83,6 +328,7 @@
     const resultText = document.getElementById("resultText");
     const correctCountSpan = document.getElementById("correctCount");
     const wrongCountSpan = document.getElementById("wrongCount");
+    const empty = document.getElementById("empty")
 
     const suits = ["man", "pin", "sou"];
     let correctCount = 0;
@@ -91,11 +337,16 @@
     let rightValue = 0;
     let clickable = false;
 
+
+  
+
     function getRandomTile() {
       const number = Math.floor(Math.random() * 9) + 1;
       const suit = suits[Math.floor(Math.random() * suits.length)];
       return { number, suit };
     }
+
+
 
     function getImagePath(tile) {
       switch (tile.suit) {
@@ -109,6 +360,7 @@
           return "";
       }
     }
+
 
     function setTiles() {
       let left, right;
@@ -127,6 +379,7 @@
 
       leftTile.style.display = "block";
       rightTile.style.display = "block";
+      empty.style.display = "none";
 
       resultText.textContent = "";
       clickable = true;
@@ -135,9 +388,14 @@
     
       //牌の画像をクリックしたときに正解か不正解かを判定して、結果を表示・カウントする
     function handleClick(isLeft) {
+
+      //clickableがfalseなら何も起きないようにする
       if (!clickable) return;
+      //clickableをfalseにしてクリックできないようにする
       clickable = false;
 
+      //左をクリック→isLeftはtrue→selectedはleftValue、otherはrightValue
+      //右をクリック→isLeftはfalse→selectedはrightValue、otherはleftValue（三項演算子）
       const selected = isLeft ? leftValue : rightValue;
       const other = isLeft ? rightValue : leftValue;
 
@@ -151,6 +409,10 @@
 
       correctCountSpan.textContent = correctCount;
       wrongCountSpan.textContent = wrongCount;
+
+      if (correctCount >= 10 ){
+        alert("終わり");
+      }
     }
 
     startButton.addEventListener("click", setTiles);
@@ -168,7 +430,9 @@
       rightTile.src = "";
       leftTile.style.display = "none";
       rightTile.style.display = "none";
+      empty.style.display = "block";
     });
+
   </script>
 </body>
 
