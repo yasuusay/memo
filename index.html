@@ -147,6 +147,9 @@
   display: block;
 }
 
+
+
+
   </style>
 </head>
 <body>
@@ -169,6 +172,7 @@
 
 
 <div id="storyScreen" class="screen hidden">
+  <div class="story-image" id="storyImage"></div>
    <div id="text-box"></div>
   <div class="choice" id="choices"></div>
 </div>
@@ -228,15 +232,16 @@
    const scenes = [
   {
     text: "こんにちは！私は麻雀案内人のマージャン子だよ！",
-    choices: [{ label: "よろしく！", next: 1 }]
+    choices: [{ label: "よろしく！", next: 1 }],
+    storyImage: ""
   },
   {
-    text: "麻雀は4人で行うゲーム。まずは牌（はい）を14枚配られるよ。",
-    choices: [{ label: "へえ〜", next: 2 }]
+    text: "麻雀は4人で行うゲーム。まずは牌（はい）が14枚配られるよ。",
+    choices: []
   },
   {
     text: "自分の番がきたら、牌を1枚引いて、いらない牌を1枚捨てるんだ。",
-    choices: []
+    choices: [{ label: "ポーカーみたいだね", next: 3 }]
   },
   {
     text: "こうして手牌を入れ替えていって、特定の形を目指すよ。",
@@ -244,7 +249,7 @@
   },
   {
     text: "目指すのは『4つのメンツ』と『1つの雀頭（じゃんとう）』という形！",
-    choices: []
+    choices: [{ label: "メンツって何？？", next: 5 }]
   },
   {
     text: "メンツっていうのは『3枚1組』のことで、『順子（しゅんつ）』や『刻子（こーつ）』があるよ。",
@@ -281,6 +286,9 @@
   const choices = document.getElementById('choices');
   choices.innerHTML = '';
 
+  const  storyImage = document.getElementById('storyImage')
+  
+
   // 選択肢がある場合：ボタン表示
   if (scene.choices && scene.choices.length > 0) {
     storyScreen.onclick = null; // クリックイベント無効化
@@ -290,7 +298,7 @@
       btn.onclick = (e) => {
         e.stopPropagation(); // 親のクリックイベントを防ぐ
         currentScene = choice.next;
-        if (currentScene === 5) {
+        if (currentScene === 11) {
           storyScreen.classList.add("hidden");
           gameScreen.classList.remove("hidden");
         } else {
