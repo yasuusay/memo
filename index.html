@@ -148,7 +148,11 @@
   display: block;
 }
 
-
+.name-input {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: #333 2px solid;
+}
 
 
   </style>
@@ -166,6 +170,7 @@
  <div id="start_container">
   <div id="startScreen" class="screen">
     <h1>ポンっと覚える！麻雀入門</h1>
+    <input class="name-input" id="playerName" placeholder="名前を入れてね" />
     <button id="gameStartButton" class="girly_btn_6">ゲームスタート！</button>
   </div>
  </div> 
@@ -223,18 +228,28 @@
     const gameScreen = document.getElementById("gameScreen");
     const storyScreen = document.getElementById("storyScreen")
     const screenCommon = document.getElementById("screenCommon")
+    const playerNameInput = document.getElementById("playerName");
 
-    gameStartButton.addEventListener("click", () => {
-    startScreen.classList.add("hidden");
-    storyScreen.classList.remove("hidden");
-    
-    });
+  gameStartButton.addEventListener("click", () => {
+  const name = playerNameInput.value.trim(); // 空白も除去
+
+  if (!name) {
+    alert("名前を入力してください！");
+    return; // 入力されていない場合はここで終了
+  }
+
+  // 入力されていれば保存・遷移
+  localStorage.setItem("playerName", name);
+  startScreen.classList.add("hidden");
+  storyScreen.classList.remove("hidden");
+  renderScene(); // ストーリー表示
+});
 
 
     //ストーリーシーン定義
    const scenes = [
   {
-    text: "こんにちは！私は麻雀案内人のマージャン子だよ！",
+    text: "こんにちは、{name}さん！私は麻雀案内人のマージャン子だよ！",
     choices: [{ label: "よろしく！", next: 1 }],
     storyImage: ""
   },
@@ -282,24 +297,27 @@
 
     let currentScene = 0;
 
-    function renderScene() {
+   function renderScene() {
   const scene = scenes[currentScene];
-  document.getElementById('text-box').textContent = scene.text;
+  const name = localStorage.getItem("playerName") || "プレイヤー";
+  const textWithName = scene.text.replace("{name}", name); // {name} を置換
+
+  document.getElementById('text-box').textContent = textWithName;
 
   const choices = document.getElementById('choices');
   choices.innerHTML = '';
 
-  const  storyImage = document.getElementById('storyImage')
-  
+  if (scene.storyImage) {
+    storyImage.innerHTML = `<img src="${scene.storyImage}" alt="キャラクター">`;
+  }
 
-  // 選択肢がある場合：ボタン表示
   if (scene.choices && scene.choices.length > 0) {
-    storyScreen.onclick = null; // クリックイベント無効化
+    storyScreen.onclick = null;
     scene.choices.forEach(choice => {
       const btn = document.createElement('button');
       btn.textContent = choice.label;
       btn.onclick = (e) => {
-        e.stopPropagation(); // 親のクリックイベントを防ぐ
+        e.stopPropagation();
         currentScene = choice.next;
         if (currentScene === 11) {
           storyScreen.classList.add("hidden");
@@ -311,7 +329,6 @@
       choices.appendChild(btn);
     });
   } else {
-    // 選択肢がない場合：画面クリックで次へ進む
     storyScreen.onclick = () => {
       currentScene++;
       if (currentScene >= scenes.length || currentScene === 11) {
